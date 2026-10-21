@@ -1,0 +1,7 @@
+[project]
+name = "mojo-pyformat"
+version = "0.1.0"
+description = "Python-exact number formatting for Mojo: {:.Nf}, {:,}, {:g}, {:%}, rounding on the exact binary value"
+license = "Apache-2.0"
+requires-python = ">=3.11,<3.15"
+dependencies = ["mojo>=1.1.0,<1.2"]
