@@ -18,7 +18,7 @@ def main() raises:
 
 ## Install
 
-Requires Mojo 1.1.
+Requires Mojo 1.2.
 
 | Way | Command |
 |---|---|

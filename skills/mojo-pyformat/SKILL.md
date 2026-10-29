@@ -5,7 +5,7 @@ description: "Format numbers in Mojo exactly as Python's format() does: fixed, e
 
 # mojo-pyformat
 
-Python `format()` for `Float64` in Mojo 1.1, checked against CPython on 53,700 cases. Rounding is
+Python `format()` for `Float64` in Mojo 1.2, checked against CPython on 53,700 cases. Rounding is
 half to even on the exact binary value (`2.675` -> `2.67`).
 
 ## Install
