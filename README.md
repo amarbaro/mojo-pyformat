@@ -1,6 +1,9 @@
 # mojo-pyformat
 
-[![CI](https://github.com/amarbaro/mojo-pyformat/actions/workflows/ci.yml/badge.svg)](https://github.com/amarbaro/mojo-pyformat/actions/workflows/ci.yml)
+<!-- badges -->
+[![ci](https://github.com/amarbaro/mojo-pyformat/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/amarbaro/mojo-pyformat/actions/workflows/ci.yml) [![latest release](https://img.shields.io/github/v/release/amarbaro/mojo-pyformat)](https://github.com/amarbaro/mojo-pyformat/releases/latest) [![license](https://img.shields.io/github/license/amarbaro/mojo-pyformat)](https://github.com/amarbaro/mojo-pyformat/blob/main/LICENSE)
+<!-- /badges -->
+
 
 Python's `format()` for numbers in Mojo, character for character: `{:.2f}`, `{:g}`, `{:e}`,
 `{:%}` and `{:,}`, with the rounding decided on the double's exact binary value, as CPython
