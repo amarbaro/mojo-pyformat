@@ -18,36 +18,13 @@ def main() raises:
     print(fmt(3.14159, "*^11.2f"))  # ***3.14****
     print(fmt_int(1e20, ">28,"))  # whole numbers beyond Int: 100,000,000,000,000,000,000
 ```
-
-| | `.2f` | `g` | `.3e` | peak RSS |
-|---|---|---|---|---|
-| mojo-pyformat | 40 ms | 126 ms | 125 to 129 ms | 11.9 to 12.2 MB |
 <!-- /install -->
-
 
 Python's `format()` for numbers in Mojo, character for character: `{:.2f}`, `{:g}`, `{:e}`,
 `{:%}` and `{:,}`, with the rounding decided on the double's exact binary value, as CPython
 does. `.2f` runs 5.9× faster than Python; `g` and `e` run 1.8× to 2×.
 
-```mojo
-from pyformat import fmt, fmt_fixed, fmt_int
-
-def main() raises:
-    print(fmt_fixed(2.675, 2))        # 2.67  (the double is below 2.675)
-    print(fmt(0.256, ".1%"))          # 25.6%
-    print(fmt(1234567.0, "g"))        # 1.23457e+06
-    print(fmt_int(1e20, ">28,"))      # 100,000,000,000,000,000,000
-```
-
-## Install
-
 Requires Mojo 1.2.
-
-| Way | Command |
-|---|---|
-| Source path | `mojo run -I path/to/mojo-pyformat/src app.mojo` |
-| Precompiled | `mojo precompile src/pyformat -o pyformat.mojoc`, then put it next to your code |
-| Vendor | copy `src/pyformat/` into your project |
 
 ## What you get
 
