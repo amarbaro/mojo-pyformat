@@ -4,6 +4,26 @@
 [![ci](https://github.com/amarbaro/mojo-pyformat/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/amarbaro/mojo-pyformat/actions/workflows/ci.yml) [![latest release](https://img.shields.io/github/v/release/amarbaro/mojo-pyformat)](https://github.com/amarbaro/mojo-pyformat/releases/latest) [![license](https://img.shields.io/github/license/amarbaro/mojo-pyformat)](https://github.com/amarbaro/mojo-pyformat/blob/main/LICENSE)
 <!-- /badges -->
 
+<!-- install -->
+Install: `pixi add mojo-pyformat` once published. For now: `git clone https://github.com/amarbaro/mojo-pyformat`, then `mojo run -I mojo-pyformat/src app.mojo`.
+
+```mojo
+from pyformat import fmt, fmt_fixed, fmt_g, fmt_int
+
+
+def main() raises:
+    print(fmt_fixed(2.675, 2))  # 2.67: rounds the exact binary value, as Python does
+    print(fmt_g(1234567.0, 6))  # 1.23457e+06
+    print(fmt(0.256, ".1%"))  # 25.6%
+    print(fmt(3.14159, "*^11.2f"))  # ***3.14****
+    print(fmt_int(1e20, ">28,"))  # whole numbers beyond Int: 100,000,000,000,000,000,000
+```
+
+| | `.2f` | `g` | `.3e` | peak RSS |
+|---|---|---|---|---|
+| mojo-pyformat | 40 ms | 126 ms | 125 to 129 ms | 11.9 to 12.2 MB |
+<!-- /install -->
+
 
 Python's `format()` for numbers in Mojo, character for character: `{:.2f}`, `{:g}`, `{:e}`,
 `{:%}` and `{:,}`, with the rounding decided on the double's exact binary value, as CPython
