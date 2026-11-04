@@ -1,5 +1,6 @@
 # Edge cases the oracle grid does not name. Every expected string is Python's format() output.
 from std.testing import assert_equal, assert_raises
+from std.math import inf
 from pyformat import fmt, fmt_int, fmt_fixed, fmt_e, fmt_g, fmt_pct, fmt_commas, py_sum
 
 
@@ -93,4 +94,7 @@ def main() raises:
     for _ in range(10):
         xs.append(0.1)
     assert_equal(py_sum(xs), 1.0)
+    assert_equal(py_sum([1e308, 1e308]), inf[DType.float64]())  # Python: inf, not nan
+    assert_equal(py_sum([-1e308, -1e308]), -inf[DType.float64]())
+    assert_equal(py_sum([1e308, 1e308, -1e308]), inf[DType.float64]())
     print("api ok")

@@ -1,6 +1,7 @@
 # Python-exact number formatting. One exact decimal expansion of the double (base-1e9 limbs on
 # the stack), then every type is a rounding of that digit string: half-to-even on the exact binary
 # value, as CPython does.
+from std.math import isfinite
 from std.memory import bitcast
 from std.bit import count_trailing_zeros
 from std.collections import Array
@@ -309,7 +310,7 @@ def _spec(s: String) raises -> _Spec:
     if i < n and b[i] == 48:
         raise Error("pyformat: zero padding and sign flags are not supported: '" + s + "'")
     while i < n and b[i] >= 48 and b[i] <= 57:
-        r.width = r.width * 10 + Int(b[i]) - 48
+        r.width = _digit(r.width, b[i], s)
         i += 1
     if i < n and b[i] == 44:
         r.comma = True
@@ -319,7 +320,7 @@ def _spec(s: String) raises -> _Spec:
         var start = i
         r.prec = 0
         while i < n and b[i] >= 48 and b[i] <= 57:
-            r.prec = r.prec * 10 + Int(b[i]) - 48
+            r.prec = _digit(r.prec, b[i], s)
             i += 1
         if i == start:
             raise Error("pyformat: format specifier missing precision: '" + s + "'")
@@ -329,6 +330,12 @@ def _spec(s: String) raises -> _Spec:
     if i < n:
         raise Error("pyformat: invalid or unsupported format specifier: '" + s + "'")
     return r^
+
+
+def _digit(v: Int, d: UInt8, spec: String) raises -> Int:
+    if v > (Int.MAX - 9) // 10:
+        raise Error("pyformat: too many decimal digits in format string: '" + spec + "'")  # Python: ValueError
+    return v * 10 + Int(d) - 48
 
 
 def fmt(x: Float64, spec: String) raises -> String:
@@ -372,4 +379,4 @@ def py_sum(xs: List[Float64]) -> Float64:
         var t = total + x
         c += (total - t) + x if abs(total) >= abs(x) else (x - t) + total
         total = t
-    return total + c if c != 0 else total
+    return total + c if c != 0 and isfinite(c) else total  # CPython: c is dropped once the sum overflowed

@@ -1,7 +1,7 @@
 """Oracle: Python format() over a fixed grid of values x specs. Prints
 "<spec> <float64 bits> <result>" per line; the Mojo runner prints the same."""
 import math, random, struct
-SPECS = [".0f", ".1f", ".2f", ".3f", ".6f", "8.2f", ",", ">12,", "g", ".3g", ".6g", ".10g", ".1%", ".0%", ".2%", "e", ".3e"]
+SPECS = [".0f", ".1f", ".2f", ".3f", ".6f", "8.2f", ",", ">12,", "g", ".3g", ".6g", ".10g", ".1%", ".0%", ".2%", "e", ".3e", ".99999999999999999999f", "99999999999999999999.2f", ">9223372036854775808,"]
 def bits(x): return struct.unpack("<q", struct.pack("<d", x))[0]
 vals = [0.0, -0.0, 0.5, 1.5, 2.5, -2.5, 2.675, 1.005, 0.125, 0.375, 1e-7, 1e-5, 0.0001, 123456789.0, 1e15, 1e16, 1e17,
         1e21, 1e22, 1.7976931348623157e308, 5e-324, 2.2250738585072014e-308, 0.1, 0.2, 0.3, 1/3, 2/3, 99.995, 99.9949999,
