@@ -3,7 +3,7 @@
 # and prints "<spec> <bits> <result>". A spec that ends in f, e, g or % is a float spec, any other an int spec.
 from std.memory import bitcast
 from std.sys import argv
-from pyformat import fmt, fmt_int
+from pyformat import fmt, fmt_int, py_repr
 
 
 def main() raises:
@@ -14,7 +14,10 @@ def main() raises:
         var x = bitcast[DType.float64](Int64(Int(f[1])))
         var r: String
         try:
-            r = fmt(x, spec) if spec[byte=spec.byte_length() - 1] in "feg%" else fmt_int(x, spec)
+            if spec == "repr":
+                r = py_repr(x)
+            else:
+                r = fmt(x, spec) if spec[byte=spec.byte_length() - 1] in "feg%" else fmt_int(x, spec)
         except:
             r = "ERR"
         out += spec + " " + String(f[1]) + " " + r + "\n"

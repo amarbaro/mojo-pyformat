@@ -55,3 +55,8 @@ including `Int.MIN`: `fmt_commas(-9223372036854775808)` is `"-9,223,372,036,854,
 
 `def py_sum(xs: List[Float64]) -> Float64`: `sum(xs)` as CPython 3.12 and later computes it
 (Neumaier compensated summation): `py_sum` of ten `0.1` is `1.0`.
+
+`def py_repr(x: Float64) -> String`: Python's `repr(x)` for a float: the shortest digits that read back
+as the same double, in fixed notation for 1e-4 <= abs(x) < 1e16 and `d.ddde+XX` otherwise; `nan`, `inf`,
+`-inf`, `-0.0` as Python writes them. Use it where Mojo's `String(Float64)` (not round-trip safe on 1.2)
+must match Python text: `py_repr(a + b)` with runtime doubles `a = 0.1`, `b = 0.2` is `"0.30000000000000004"` (a literal `0.1 + 0.2` is folded exactly to `0.3` at compile time), `py_repr(1e16)` is `"1e+16"`.

@@ -28,6 +28,8 @@ Requires Mojo 1.2.
 
 ## What you get
 
+- `py_repr(x)`: Python `repr(float)` exactly. Mojo 1.2's own float printing is not round-trip safe (two different doubles print the same), so text that must equal Python goes through this.
+
 - `fmt(x, spec)`: a Python format spec for the types `f`, `e`, `g`, `%`, with fill, align,
   width and precision. No precision means 6, as in Python.
 - `fmt_int(x, spec)`: `format(int(x), spec)` for a whole number held in a `Float64`, with
@@ -67,8 +69,8 @@ scripts/ci.sh
 ```
 
 It runs `uv sync`, builds the runner, then: `scripts/check.sh` compares the runner with
-`tools/oracle.py` (Python `format()`, 10,846 value and spec pairs, exact float bits in, text out);
-`tools/oracle_wide.py` does the same for 42,856 pairs with random 64-bit patterns (subnormals,
+`tools/oracle.py` (Python `format()` and `repr()`, 15,511 value and spec pairs, 2,751 of them `repr` (all 2,098 powers of two included), exact float bits in, text out);
+`tools/oracle_wide.py` does the same for 43,660 pairs with random 64-bit patterns (subnormals,
 huge exponents), precisions up to 100, fill, align, width, and whole numbers up to 1.8e308;
 `tests/api.mojo` covers ties, signs, non-finite values, spec errors and `py_sum`.
 CI runs the same script on every push.

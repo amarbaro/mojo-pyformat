@@ -14,3 +14,7 @@ for spec in SPECS:
         try: out = format(int(x) if spec in (",", ">12,") and math.isfinite(x) else x, spec)
         except (ValueError, OverflowError) as e: out = "ERR"
         print(spec, bits(x), out)
+for v in vals + [3.0000000050617508e+16, 9.999999999999996e+15, 1e16, 9999999999999998.0, 0.0001, 0.00009999, 1e-4, 5e-5, 123.0, 1e100, -1e-300, 2**53 + 0.0, 2.0**63, 4.35, 0.1 + 0.2]:
+    print("repr", bits(v), repr(v))
+for k in range(-1074, 1024):                             # every power of two (shortest-digit ties)
+    print("repr", bits(2.0 ** k), repr(2.0 ** k))

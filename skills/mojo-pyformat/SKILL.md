@@ -5,7 +5,7 @@ description: "Format numbers in Mojo exactly as Python's format() does: fixed, e
 
 # mojo-pyformat
 
-Python `format()` for `Float64` in Mojo 1.2, checked against CPython on 53,700 cases. Rounding is
+Python `format()` for `Float64` in Mojo 1.2, checked against CPython on 59,171 cases (format and repr). Rounding is
 half to even on the exact binary value (`2.675` -> `2.67`).
 
 ## Install
@@ -16,7 +16,7 @@ or copy `src/pyformat/`.
 ## Use
 
 ```mojo
-from pyformat import fmt, fmt_int, fmt_fixed, fmt_g, fmt_e, fmt_pct, fmt_commas, py_sum
+from pyformat import py_repr, fmt, fmt_int, fmt_fixed, fmt_g, fmt_e, fmt_pct, fmt_commas, py_sum
 
 def main() raises:
     print(fmt_fixed(3.14159, 2, 8))     # "    3.14"   == f"{x:8.2f}"
@@ -39,3 +39,5 @@ def main() raises:
 - Do not parse the result back to check it: compare with Python's `format()` (see `tools/oracle.py`).
 - Do not "fix" a surprising digit (`0.05` -> `"0.1"`, `2.675` -> `"2.67"`): that is the exact binary
   value, and it is what Python prints.
+
+- Printing a Float64 that must equal Python's text: `py_repr(x)`, never `String(x)` (not round-trip safe on Mojo 1.2).

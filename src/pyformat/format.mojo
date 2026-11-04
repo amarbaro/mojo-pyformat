@@ -162,7 +162,8 @@ def _fixed_fast(bits: UInt64, prec: Int, mut out: List[UInt8]) -> Bool:
     return True
 
 
-def _body(x: Float64, kind: UInt8, prec: Int, pct: Bool) -> List[UInt8]:
+def _body(x: Float64, kind: UInt8, prec_in: Int, pct: Bool) -> List[UInt8]:
+    var prec = max(prec_in, 0)  # a negative precision would size a negative buffer
     var v = x * 100.0 if pct else x
     var out = List[UInt8](capacity=prec + 24)
     if v != v:
@@ -308,7 +309,7 @@ def _spec(s: String) raises -> _Spec:
         r.align = b[0]
         i = 1
     if i < n and b[i] == 48:
-        raise Error("pyformat: zero padding and sign flags are not supported: '" + s + "'")
+        raise Error("pyformat: zero padding is not supported: '" + s + "'")
     while i < n and b[i] >= 48 and b[i] <= 57:
         r.width = _digit(r.width, b[i], s)
         i += 1
@@ -360,7 +361,7 @@ def fmt_int(x: Float64, spec: String) raises -> String:
     else:
         var dec = _Dec(bits)
         if dec.n > dec.pt:
-            raise Error("pyformat: fmt_int needs a whole number, got " + String(x))
+            raise Error("pyformat: fmt_int needs a whole number, got " + py_repr(x))
         body = List[UInt8](capacity=dec.pt + dec.pt // 3 + 2)
         if dec.n > 0 and (bits >> 63) != 0:
             body.append(45)
@@ -380,3 +381,129 @@ def py_sum(xs: List[Float64]) -> Float64:
         c += (total - t) + x if abs(total) >= abs(x) else (x - t) + total
         total = t
     return total + c if c != 0 and isfinite(c) else total  # CPython: c is dropped once the sum overflowed
+
+def _nb(s: String, up: Bool) -> String:
+    """The `d.ddde+XX` text one unit in the last digit up or down, renormalised ("" when it reaches 0)."""
+    var b = s.as_bytes()
+    var neg = b[0] == 45
+    var epos = s.find("e")
+    var digs = List[UInt8]()
+    for i in range(1 if neg else 0, epos):
+        if b[i] != 46:
+            digs.append(b[i])
+    var e = 0
+    for i in range(epos + 2, len(b)):
+        e = e * 10 + Int(b[i] - 48)
+    if b[epos + 1] == 45:
+        e = -e
+    var n = len(digs)
+    var k = n - 1
+    if up:
+        while k >= 0 and digs[k] == 57:
+            digs[k] = 48
+            k -= 1
+        if k < 0:  # 9.99 -> 10.0: keep n digits, one more power of ten
+            digs.insert(0, 49)
+            _ = digs.pop()
+            e += 1
+        else:
+            digs[k] += 1
+    else:
+        while k >= 0 and digs[k] == 48:
+            digs[k] = 57
+            k -= 1
+        if k < 0:
+            return ""
+        digs[k] -= 1
+        if digs[0] == 48:  # 1.00 -> 0.99: drop the leading zero, add a 9, one less power of ten
+            if n == 1:
+                return ""
+            _ = digs.pop(0)
+            digs.append(57)
+            e -= 1
+    var out = String("-") if neg else String()
+    out += chr(Int(digs[0]))
+    if n > 1:
+        out += "."
+        for i in range(1, n):
+            out += chr(Int(digs[i]))
+    out += "e-" if e < 0 else "e+"
+    var ae = -e if e < 0 else e
+    if ae < 10:
+        out += "0"
+    out += String(ae)
+    return out^
+
+
+def py_repr(x: Float64) -> String:
+    """Python repr(float): the shortest digits that round-trip, fixed notation for 1e-4 <= |x| < 1e16,
+    else d.ddde+XX. (Mojo's own float printing is not round-trip safe on 1.2.)"""
+    if x != x:
+        return "nan"
+    if x == Float64.MAX * 2:
+        return "inf"
+    if x == -Float64.MAX * 2:
+        return "-inf"
+    if x == 0:
+        return "-0.0" if 1.0 / x < 0 else "0.0"
+    if abs(x) < 1e16 and x == Float64(Int(x)):  # whole numbers: exact, no digit search
+        return String(Int(x)) + ".0"
+    var s = String()
+    for p in range(17):
+        s = fmt_e(x, p)
+        try:
+            if atof(s) == x:
+                break
+            # the correctly rounded digits may not read back while a neighbour does (2**-24: ...062 vs ...063)
+            var hit = False
+            for up in [True, False]:
+                var t = _nb(s, up)
+                if t and atof(t) == x:
+                    s = t^
+                    hit = True
+                    break
+            if hit:
+                break
+        except:
+            pass
+    var b = s.as_bytes()
+    var neg = b[0] == 45
+    var epos = s.find("e")
+    var digits = String()
+    for i in range(1 if neg else 0, epos):
+        if b[i] != 46:
+            digits += chr(Int(b[i]))
+    var db = digits.as_bytes()
+    var n = len(db)
+    while n > 1 and db[n - 1] == 48:
+        n -= 1
+    var trimmed = String(digits[byte=0:n])
+    digits = trimmed^
+    var e = 0
+    for i in range(epos + 2, len(b)):
+        e = e * 10 + Int(b[i] - 48)
+    if b[epos + 1] == 45:
+        e = -e
+    var out = String("-") if neg else String()
+    if -4 <= e and e < 16:
+        if e >= 0:
+            var ip = String(digits[byte = 0 : min(e + 1, n)])
+            for _ in range(e + 1 - n):
+                ip += "0"
+            var fp = String(digits[byte = e + 1 :]) if e + 1 < n else String("0")
+            out += ip + "." + fp
+        else:
+            out += "0."
+            for _ in range(-e - 1):
+                out += "0"
+            out += digits
+        return out^
+    out += String(digits[byte=0:1])
+    if n > 1:
+        out += "." + String(digits[byte=1:])
+    out += "e-" if e < 0 else "e+"
+    var ae = -e if e < 0 else e
+    if ae < 10:
+        out += "0"
+    out += String(ae)
+    return out^

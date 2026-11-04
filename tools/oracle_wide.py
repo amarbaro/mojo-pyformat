@@ -21,3 +21,5 @@ for spec in [",", ">12,", "<30,", "*^40,", "d", "15", "-<9"]:
         x = float(i)
         for sx in (x, -x):
             print(spec, bits(sx), format(int(sx), spec))
+for x in xs:                                           # repr on random bits and subnormals too
+    print("repr", bits(x), repr(x))
