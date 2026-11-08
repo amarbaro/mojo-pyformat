@@ -3,9 +3,13 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 command -v uv >/dev/null || { echo "FAIL setup: uv not installed"; exit 1; }
-uv sync || { echo "FAIL setup: uv sync"; exit 1; }
+if [ -z "${MOJO:-}" ]; then
+  uv sync || { echo "FAIL setup: uv sync"; exit 1; }
+  MOJO=.venv/bin/mojo
+fi
+export MOJO
 python3 -c 'import sys; print("oracle python", sys.version.split()[0])'
-M=.venv/bin/mojo
+M=$MOJO
 mkdir -p .work
 $M build -I src tests/cases.mojo -o .work/cases || { echo "FAIL build: tests/cases.mojo"; exit 1; }
 CASES=.work/cases scripts/check.sh
