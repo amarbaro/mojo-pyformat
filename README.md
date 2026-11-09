@@ -5,7 +5,8 @@
 <!-- /badges -->
 
 <!-- install -->
-Install: `pixi add mojo-pyformat` once published. For now: `git clone https://github.com/amarbaro/mojo-pyformat`, then `mojo run -I mojo-pyformat/src app.mojo`.
+Install: `pixi workspace channel add https://conda.modular.com/max https://prefix.dev/amarbaro/amarbaro`, then `pixi add mojo-pyformat` (import `pyformat`). From source: `git clone https://github.com/amarbaro/mojo-pyformat`, then `mojo run -I mojo-pyformat/src app.mojo`.
+Toolchains: Mojo 1.2 stable, and the nightly 1.3.0.dev2026110805 in the weekly [mojo-libs](https://github.com/amarbaro/mojo-libs) matrix (36 libraries on stable, 35 on nightly).
 
 ```mojo
 from pyformat import fmt, fmt_fixed, fmt_g, fmt_int
