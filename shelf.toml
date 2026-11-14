@@ -1,0 +1,4 @@
+name = "mojo-pyformat"
+version = "0.2.2"
+description = "Python-exact number formatting for Mojo: {:.Nf}, {:,}, {:g}, {:%}, rounding on the exact binary value"
+tags = ["mojo", "format", "numbers"]
