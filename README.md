@@ -1,5 +1,7 @@
 # mojo-pyformat
 
+> **Moved:** this library now lives in [amarbaro/mojo-libs](https://github.com/amarbaro/mojo-libs/tree/main/libs/pyformat). This repository is read-only; issues and pull requests go there.
+
 <!-- badges -->
 [![ci](https://github.com/amarbaro/mojo-pyformat/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/amarbaro/mojo-pyformat/actions/workflows/ci.yml) [![latest release](https://img.shields.io/github/v/release/amarbaro/mojo-pyformat)](https://github.com/amarbaro/mojo-pyformat/releases/latest) [![license](https://img.shields.io/github/license/amarbaro/mojo-pyformat)](https://github.com/amarbaro/mojo-pyformat/blob/main/LICENSE)
 <!-- /badges -->
